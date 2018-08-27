@@ -1,0 +1,14 @@
+const EXPIRE_12_H = 43200;
+const EXPIRE_24_H = 2 * EXPIRE_12_H;
+const WEEK_DAYS = 7;
+
+const EXPIRE_1_WEEK = WEEK_DAYS * EXPIRE_24_H;
+
+const EXPIRE_SIGN_IN_SESSION = '14 days';
+
+module.exports = {
+  EXPIRE_12_H,
+  EXPIRE_24_H,
+  EXPIRE_1_WEEK,
+  EXPIRE_SIGN_IN_SESSION,
+};
