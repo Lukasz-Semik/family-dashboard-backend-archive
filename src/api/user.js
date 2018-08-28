@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const ROUTER = require('express').Router();
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
 const User = require('../models/User');
 const UserTemp = require('../models/UserTemp');
@@ -197,6 +198,18 @@ ROUTER.post(API_SIGN_IN, (req, res) => {
       });
     })
     .catch(err => res.status(400).json(err));
+});
+
+ROUTER.get('/is-signed-in', passport.authenticate('jwt', { session: false }), (req, res) => {
+  User.findById(req.user.id)
+    .then(user => {
+      if (!user) {
+        return res.json({ isLoggedIn: false });
+      }
+
+      res.json({ isLoggedIn: true });
+    })
+    .catch(() => res.json({ isLoggedIn: false }));
 });
 
 module.exports = ROUTER;
