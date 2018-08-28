@@ -1,13 +1,14 @@
 const sgMail = require('@sendgrid/mail');
+const { DEV_ENV, TESTS_ENV } = require('../constants/env');
 
-const { SENDGRID_API_KEY } = require('../config/secrets/secrets');
-const { DEV_ENV } = require('../constants/env');
+const env = process.env.NODE_ENV;
+const shouldRequireSecrets = env === DEV_ENV || env === TESTS_ENV;
+const { SENDGRID_API_KEY } = shouldRequireSecrets ? require('../config/secrets/secrets') : {};
 
-sgMail.setApiKey(SENDGRID_API_KEY);
+const sendgridApiKey = process.env.SENDGRID_API_KEY || SENDGRID_API_KEY;
+sgMail.setApiKey(sendgridApiKey);
 
 const sendAccountConfirmationRequest = (email, userName, token) => {
-  const env = process.env.NODE_ENV;
-
   const baseUrl =
     env === DEV_ENV ? 'http://localhost:8080' : 'https://family-dashboard-be.herokuapp.com';
 
