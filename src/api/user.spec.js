@@ -8,6 +8,7 @@ const {
   API_FULL_SIGN_IN,
   API_FULL_CONFIRM,
   API_FULL_IS_SIGNED_IN,
+  API_FULL_GET_CURRENT_USER,
 } = require('../constants/routes');
 const Token = require('../models/Token');
 
@@ -322,6 +323,61 @@ describe('user api routes', () => {
     it('Should respond with `401` and isLoggedIn message set to false for empty token', done => {
       request(APP)
         .get(API_FULL_IS_SIGNED_IN)
+        .set('Authorization', '')
+        .expect(401)
+        .expect(res => {
+          expect(res.text).toBe('Unauthorized');
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+  });
+
+  describe(`GET ${API_FULL_GET_CURRENT_USER}`, () => {
+    it("Should respond with `200` and return user object and it's profile", done => {
+      request(APP)
+        .get(API_FULL_GET_CURRENT_USER)
+        .set('Authorization', AUTHENTICATED_TOKEN)
+        .expect(200)
+        .expect(res => {
+          expect(res.body.user.userProfile.createdAt).toEqual(expect.any(String));
+          expect(res.body).toMatchObject({
+            user: {
+              email: 'john@doe.com',
+              hasFamily: false,
+              userProfile: {
+                firstName: 'John',
+                isFamilyHead: false,
+                lastName: 'Doe',
+              },
+            },
+          });
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('Should respond with `401` and Unathorized message for wrong token', done => {
+      request(APP)
+        .get(API_FULL_GET_CURRENT_USER)
+        .set('Authorization', mockedWrongToken)
+        .expect(401)
+        .expect(res => {
+          expect(res.text).toBe('Unauthorized');
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('Should respond with `401` and isLoggedIn message set to false for empty token', done => {
+      request(APP)
+        .get(API_FULL_GET_CURRENT_USER)
         .set('Authorization', '')
         .expect(401)
         .expect(res => {

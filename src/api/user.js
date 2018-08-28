@@ -13,6 +13,7 @@ const {
   API_CONFIRM,
   API_TEST,
   API_IS_SIGNED_IN,
+  API_GET_CURRENT_USER,
 } = require('../constants/routes');
 const {
   EMAIL_EXISTS,
@@ -214,6 +215,22 @@ ROUTER.get(API_IS_SIGNED_IN, passport.authenticate('jwt', { session: false }), (
       }
 
       res.json({ isLoggedIn: true });
+    })
+    .catch(() => res.json({ isLoggedIn: false }));
+});
+
+ROUTER.get(API_GET_CURRENT_USER, passport.authenticate('jwt', { session: false }), (req, res) => {
+  User.findById(req.user.id)
+    .populate('userProfile', ['firstName', 'lastName', 'createdAt', 'isFamilyHead'])
+    .then(user => {
+      const errors = {};
+
+      if (!user) {
+        errors.user = USER_NOT_FOUND;
+        return res.json({ errors });
+      }
+
+      res.json({ user });
     })
     .catch(() => res.json({ isLoggedIn: false }));
 });
