@@ -7,7 +7,13 @@ const User = require('../models/User');
 const UserTemp = require('../models/UserTemp');
 const UserProfile = require('../models/UserProfile');
 const Token = require('../models/Token');
-const { API_SIGN_UP, API_SIGN_IN, API_CONFIRM, API_TEST } = require('../constants/routes');
+const {
+  API_SIGN_UP,
+  API_SIGN_IN,
+  API_CONFIRM,
+  API_TEST,
+  API_IS_SIGNED_IN,
+} = require('../constants/routes');
 const {
   EMAIL_EXISTS,
   EMAIL_NOT_VERIFIED_EXISTS,
@@ -200,7 +206,7 @@ ROUTER.post(API_SIGN_IN, (req, res) => {
     .catch(err => res.status(400).json(err));
 });
 
-ROUTER.get('/is-signed-in', passport.authenticate('jwt', { session: false }), (req, res) => {
+ROUTER.get(API_IS_SIGNED_IN, passport.authenticate('jwt', { session: false }), (req, res) => {
   User.findById(req.user.id)
     .then(user => {
       if (!user) {

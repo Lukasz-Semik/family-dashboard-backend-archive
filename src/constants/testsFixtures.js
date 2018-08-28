@@ -19,6 +19,10 @@ const mockedUsersData = [
   },
 ];
 
+const mockedWrongToken =
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViODU1YWNmZDZmNDZhZGU1MGMxOWMzYiIsImVtYWlsIjoic2VtaWsubHVrYXN6QGdtYWlsLmNvbSIsImlhdCI6MTUzNTQ2NjUwMSwiZXhwIjoxNTM2Njc2MTAxfQ.gouwZ2zU50SzloQEHyRjAvP6No1_E2NJHlZXMZrRpIs';
+
 module.exports = {
   mockedUsersData,
+  mockedWrongToken,
 };
