@@ -4,9 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "prepareDev": "node src/utils/createSecretFile.js",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "export NODE_ENV=test || SET NODE_ENV=test && nyc mocha src/**/*.spec.js --exit"
+    "lint": "eslint src",
+    "test": "export NODE_ENV=test || SET NODE_ENV=test && nyc mocha src/**/*.spec.js --exit",
+    "deploy": "git checkout master && git pull origin master && git push heroku master",
+    "prepush": "yarn lint && yarn test"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -24,6 +28,7 @@
     "eslint-config-prettier": "^3.0.1",
     "eslint-plugin-prettier": "^2.6.2",
     "expect": "^23.5.0",
+    "husky": "^0.14.3",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.3",
     "nyc": "^12.0.2",
