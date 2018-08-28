@@ -17,6 +17,8 @@ const TOKEN_NOT_FOUND = 'token-not-found';
 const FIRST_NAME_REQUIRED = 'first-name-required';
 const LAST_NAME_REQUIRED = 'last-name-required';
 
+const FAMILY_NAME_REQUIRED = 'family-name-required';
+
 module.exports = {
   EMAIL_REQUIRED,
   EMAIL_WRONG_FORMAT,
@@ -32,4 +34,5 @@ module.exports = {
   TOKEN_NOT_FOUND,
   FIRST_NAME_REQUIRED,
   LAST_NAME_REQUIRED,
+  FAMILY_NAME_REQUIRED,
 };

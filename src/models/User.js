@@ -22,6 +22,10 @@ const UserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'UserProfile',
   },
+  family: {
+    type: Schema.Types.ObjectId,
+    ref: 'Family',
+  },
 });
 
 const User = mongoose.model('User', UserSchema);
