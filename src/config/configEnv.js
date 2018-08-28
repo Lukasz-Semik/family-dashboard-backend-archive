@@ -10,7 +10,7 @@ const setUpEnvironment = () => {
   if (env === DEV_ENV) {
     process.env.PORT = DEV_PORT;
     process.env.NODE_ENV = DEV_ENV;
-    process.env.MONGODB_URI = `mongodb://${dbUser}:${dbPass}@ds247191.mlab.com:47191/family-dashboard-dev`;
+    process.env.MONGODB_URI = `mongodb://${dbUser}:${dbPass}@ds237072.mlab.com:37072/family-dashboard-dev`;
   } else if (env === TESTS_ENV) {
     process.env.PORT = TEST_PORT;
     process.env.MONGODB_URI = `mongodb://${dbUser}:${dbPass}@ds125402.mlab.com:25402/family-dashboard-test`;

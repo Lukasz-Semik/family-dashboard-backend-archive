@@ -3,11 +3,16 @@ const expect = require('expect');
 const { ObjectID } = require('mongodb');
 
 const { APP } = require('../server');
-const { API_FULL_SIGN_UP, API_FULL_SIGN_IN, API_FULL_CONFIRM } = require('../constants/routes');
+const {
+  API_FULL_SIGN_UP,
+  API_FULL_SIGN_IN,
+  API_FULL_CONFIRM,
+  API_FULL_IS_SIGNED_IN,
+} = require('../constants/routes');
 const Token = require('../models/Token');
 
 const { seedUsers } = require('../utils/seeds');
-const { mockedUsersData } = require('../constants/testsFixtures');
+const { mockedUsersData, mockedWrongToken } = require('../constants/testsFixtures');
 
 const {
   EMAIL_REQUIRED,
@@ -31,6 +36,8 @@ before(done => {
 });
 
 describe('user api routes', () => {
+  let AUTHENTICATED_TOKEN = '';
+
   describe(`POST ${API_FULL_SIGN_UP}`, () => {
     it('Should create new temporary user', done => {
       const email = 'example@email.com';
@@ -193,7 +200,10 @@ describe('user api routes', () => {
         .expect(200)
         .expect(res => {
           expect(res.body.success).toBe(true);
-          expect(res.body.token.slice(0, 6)).toBe('Bearer');
+          const { token } = res.body;
+          AUTHENTICATED_TOKEN = token;
+
+          expect(token.slice(0, 6)).toBe('Bearer');
         })
         .end(err => {
           if (err) return done(err);
@@ -270,6 +280,52 @@ describe('user api routes', () => {
           expect(res.body.errors).toEqual({
             user: USER_NOT_VERIFIED,
           });
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+  });
+
+  describe(`GET ${API_FULL_IS_SIGNED_IN}`, () => {
+    it('Should respond with `200` and isLoggedIn message for authenticated user', done => {
+      request(APP)
+        .get(API_FULL_IS_SIGNED_IN)
+        .set('Authorization', AUTHENTICATED_TOKEN)
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toEqual({
+            isLoggedIn: true,
+          });
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('Should respond with `401` and Unathorized message for wrong token', done => {
+      request(APP)
+        .get(API_FULL_IS_SIGNED_IN)
+        .set('Authorization', mockedWrongToken)
+        .expect(401)
+        .expect(res => {
+          expect(res.text).toBe('Unauthorized');
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('Should respond with `401` and isLoggedIn message set to false for empty token', done => {
+      request(APP)
+        .get(API_FULL_IS_SIGNED_IN)
+        .set('Authorization', '')
+        .expect(401)
+        .expect(res => {
+          expect(res.text).toBe('Unauthorized');
         })
         .end(err => {
           if (err) return done(err);
