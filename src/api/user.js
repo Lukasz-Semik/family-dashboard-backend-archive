@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const ROUTER = require('express').Router();
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 
+const authenticate = require('../helpers/authenticate');
 const User = require('../models/User');
 const UserTemp = require('../models/UserTemp');
 const UserProfile = require('../models/UserProfile');
@@ -11,7 +11,6 @@ const {
   API_SIGN_UP,
   API_SIGN_IN,
   API_CONFIRM,
-  API_TEST,
   API_IS_SIGNED_IN,
   API_GET_CURRENT_USER,
 } = require('../constants/routes');
@@ -29,11 +28,6 @@ const { validateSingUpData, validateSignInData } = require('../helpers/validator
 const secret = require('../config/mongodb/key-mongo-db').secret;
 const { sendAccountConfirmationRequest } = require('../services/mailers');
 const { TESTS_ENV } = require('../constants/env');
-
-// @route GET api/user/test
-// @desc Route only for set up checking
-// @access public
-ROUTER.get(API_TEST, (req, res) => res.json({ msg: 'User Route Test works!' }));
 
 // @route   POST api/user/sign-up
 // @desc    Create User and UserProfile
@@ -207,7 +201,10 @@ ROUTER.post(API_SIGN_IN, (req, res) => {
     .catch(err => res.status(400).json(err));
 });
 
-ROUTER.get(API_IS_SIGNED_IN, passport.authenticate('jwt', { session: false }), (req, res) => {
+// @route   GET api/user/sign-in
+// @desc    Check if user is logged in
+// @access  Private
+ROUTER.get(API_IS_SIGNED_IN, authenticate(), (req, res) => {
   User.findById(req.user.id)
     .then(user => {
       if (!user) {
@@ -219,7 +216,10 @@ ROUTER.get(API_IS_SIGNED_IN, passport.authenticate('jwt', { session: false }), (
     .catch(() => res.json({ isLoggedIn: false }));
 });
 
-ROUTER.get(API_GET_CURRENT_USER, passport.authenticate('jwt', { session: false }), (req, res) => {
+// @route   GET api/user/get-current-user'
+// @desc    Check if user is logged in
+// @access  Private
+ROUTER.get(API_GET_CURRENT_USER, authenticate(), (req, res) => {
   User.findById(req.user.id)
     .populate('userProfile', ['firstName', 'lastName', 'createdAt', 'isFamilyHead'])
     .then(user => {

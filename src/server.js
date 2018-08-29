@@ -7,8 +7,9 @@ const path = require('path');
 const passport = require('passport');
 
 const DB = require('./config/mongodb/key-mongo-db').mongoURI;
-const { API_BASE } = require('./constants/routes');
+const { API_BASE_USER, API_BASE_FAMILY } = require('./constants/routes');
 const userRouter = require('./api/user');
+const familyRouter = require('./api/family');
 const mailerRouter = require('./routes/mailers');
 
 const PORT = process.env.PORT;
@@ -19,7 +20,8 @@ APP.set('view engine', 'hbs');
 APP.use(bodyParser.urlencoded({ extended: false }));
 APP.use(bodyParser.json());
 APP.use(passport.initialize());
-APP.use(API_BASE, userRouter);
+APP.use(API_BASE_USER, userRouter);
+APP.use(API_BASE_FAMILY, familyRouter);
 APP.use('/', mailerRouter);
 APP.use(express.static(path.join(__dirname, '../public')));
 

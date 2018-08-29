@@ -3,6 +3,8 @@ const expect = require('expect');
 const { ObjectID } = require('mongodb');
 
 const { APP } = require('../server');
+const { seedDb } = require('../utils/seeds');
+const Token = require('../models/Token');
 const {
   API_FULL_SIGN_UP,
   API_FULL_SIGN_IN,
@@ -10,11 +12,6 @@ const {
   API_FULL_IS_SIGNED_IN,
   API_FULL_GET_CURRENT_USER,
 } = require('../constants/routes');
-const Token = require('../models/Token');
-
-const { seedUsers } = require('../utils/seeds');
-const { mockedUsersData, mockedWrongToken } = require('../constants/testsFixtures');
-
 const {
   EMAIL_REQUIRED,
   EMAIL_WRONG_FORMAT,
@@ -29,22 +26,17 @@ const {
   FIRST_NAME_REQUIRED,
   LAST_NAME_REQUIRED,
 } = require('../constants/errorsMessages');
+const { mockedUsersData, mockedWrongToken } = require('../constants/testsFixtures');
 
 const { password: defaultPassword } = mockedUsersData[0];
+before(seedDb);
 
-before(done => {
-  seedUsers(done);
-});
-
-describe('user api routes', () => {
+describe('user api', () => {
   let AUTHENTICATED_TOKEN = '';
-
   describe(`POST ${API_FULL_SIGN_UP}`, () => {
     it('Should create new temporary user', done => {
-      const email = 'example@email.com';
-      const password = defaultPassword;
-      const passwordConfirm = defaultPassword;
-      const { firstName, lastName } = mockedUsersData[0];
+      const { email, password, firstName, lastName } = mockedUsersData[0];
+      const passwordConfirm = password;
 
       request(APP)
         .post(API_FULL_SIGN_UP)
@@ -111,11 +103,9 @@ describe('user api routes', () => {
     });
 
     it('Should respond with `400` and errors for existing email', done => {
-      const email = 'john@doe.com';
-      const password = defaultPassword;
-      const passwordConfirm = defaultPassword;
-      const firstName = 'John';
-      const lastName = 'Doe';
+      const { email, password, firstName, lastName } = mockedUsersData[1];
+
+      const passwordConfirm = password;
 
       request(APP)
         .post(API_FULL_SIGN_UP)
@@ -133,67 +123,9 @@ describe('user api routes', () => {
     });
   });
 
-  describe(`POST ${API_FULL_CONFIRM}`, () => {
-    it('Should respond with 400 and error for not provided token', done => {
-      request(APP)
-        .post(API_FULL_CONFIRM)
-        .send()
-        .expect(400)
-        .expect(res => {
-          expect(res.body.errors).toEqual({
-            token: TOKEN_NOT_SEND,
-          });
-        })
-        .end(err => {
-          if (err) return done(err);
-          done();
-        });
-    });
-
-    it('Should respond with 404 and error for not provided token', done => {
-      request(APP)
-        .post(API_FULL_CONFIRM)
-        .send({ token: ObjectID() })
-        .expect(404)
-        .expect(res => {
-          expect(res.body.errors).toEqual({
-            token: TOKEN_NOT_FOUND,
-          });
-        })
-        .end(err => {
-          if (err) return done(err);
-          done();
-        });
-    });
-
-    it('Should respond with 200 and return user object', done => {
-      Token.findOne({ email: mockedUsersData[2].email }).then(token => {
-        request(APP)
-          .post(API_FULL_CONFIRM)
-          .send({ token: token._id })
-          .expect(res => {
-            expect(res.body).toMatchObject({
-              hasFamily: false,
-              email: 'stan@doe.com',
-              password: 'Password123',
-              userProfile: {
-                isFamilyHead: false,
-                firstName: 'Stan',
-                lastName: 'Doe',
-              },
-            });
-          })
-          .end(err => {
-            if (err) return done(err);
-            done();
-          });
-      });
-    });
-  });
-
   describe(`POST ${API_FULL_SIGN_IN}`, () => {
     it('Should return proper data for succesfull signin', done => {
-      const { email, password } = mockedUsersData[0];
+      const { email, password } = mockedUsersData[1];
 
       request(APP)
         .post(API_FULL_SIGN_IN)
@@ -252,7 +184,7 @@ describe('user api routes', () => {
     });
 
     it('Should respond with `400` and error for not valid password', done => {
-      const { email } = mockedUsersData[0];
+      const { email } = mockedUsersData[1];
       const password = 'Password12345';
 
       request(APP)
@@ -271,7 +203,7 @@ describe('user api routes', () => {
     });
 
     it('Should respond with `400` and error for not verified user', done => {
-      const { email } = mockedUsersData[1];
+      const { email } = mockedUsersData[0];
       const password = defaultPassword;
       request(APP)
         .post(API_FULL_SIGN_IN)
@@ -286,6 +218,66 @@ describe('user api routes', () => {
           if (err) return done(err);
           done();
         });
+    });
+  });
+
+  describe(`POST ${API_FULL_CONFIRM}`, () => {
+    it('Should respond with 400 and error for not provided token', done => {
+      request(APP)
+        .post(API_FULL_CONFIRM)
+        .send()
+        .expect(400)
+        .expect(res => {
+          expect(res.body.errors).toEqual({
+            token: TOKEN_NOT_SEND,
+          });
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('Should respond with 404 and error for not provided token', done => {
+      request(APP)
+        .post(API_FULL_CONFIRM)
+        .send({ token: ObjectID() })
+        .expect(404)
+        .expect(res => {
+          expect(res.body.errors).toEqual({
+            token: TOKEN_NOT_FOUND,
+          });
+        })
+        .end(err => {
+          if (err) return done(err);
+          done();
+        });
+    });
+
+    it('Should respond with 200 and return user object', done => {
+      const { email, password, firstName, lastName } = mockedUsersData[2];
+
+      Token.findOne({ email }).then(token => {
+        request(APP)
+          .post(API_FULL_CONFIRM)
+          .send({ token: token._id })
+          .expect(res => {
+            expect(res.body).toMatchObject({
+              hasFamily: false,
+              email,
+              password,
+              userProfile: {
+                lastName,
+                isFamilyHead: false,
+                firstName,
+              },
+            });
+          })
+          .end(err => {
+            if (err) return done(err);
+            done();
+          });
+      });
     });
   });
 
@@ -345,10 +337,10 @@ describe('user api routes', () => {
           expect(res.body.user.userProfile.createdAt).toEqual(expect.any(String));
           expect(res.body).toMatchObject({
             user: {
-              email: 'john@doe.com',
+              email: 'jane@doe.com',
               hasFamily: false,
               userProfile: {
-                firstName: 'John',
+                firstName: 'Jane',
                 isFamilyHead: false,
                 lastName: 'Doe',
               },

@@ -10,12 +10,15 @@ const PASS_INCORRECT = 'password-incorrect';
 
 const USER_NOT_FOUND = 'user-not-found';
 const USER_NOT_VERIFIED = 'user-not-verified';
+const USER_HAS_FAMILY = 'user-has-family';
 
 const TOKEN_NOT_SEND = 'token-not-sent';
 const TOKEN_NOT_FOUND = 'token-not-found';
 
 const FIRST_NAME_REQUIRED = 'first-name-required';
 const LAST_NAME_REQUIRED = 'last-name-required';
+
+const FAMILY_NAME_REQUIRED = 'family-name-required';
 
 module.exports = {
   EMAIL_REQUIRED,
@@ -27,9 +30,11 @@ module.exports = {
   PASS_NOT_EQUAL,
   PASS_INCORRECT,
   USER_NOT_FOUND,
+  USER_HAS_FAMILY,
   USER_NOT_VERIFIED,
   TOKEN_NOT_SEND,
   TOKEN_NOT_FOUND,
   FIRST_NAME_REQUIRED,
   LAST_NAME_REQUIRED,
+  FAMILY_NAME_REQUIRED,
 };
