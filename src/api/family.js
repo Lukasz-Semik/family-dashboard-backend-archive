@@ -4,7 +4,11 @@ const authenticate = require('../helpers/authenticate');
 const User = require('../models/User');
 const Family = require('../models/Family');
 const { API_CREATE_FAMILY } = require('../constants/routes');
-const { USER_NOT_FOUND, FAMILY_NAME_REQUIRED } = require('../constants/errorsMessages');
+const {
+  USER_NOT_FOUND,
+  USER_HAS_FAMILY,
+  FAMILY_NAME_REQUIRED,
+} = require('../constants/errorsMessages');
 const { isBlank } = require('../helpers/validators');
 
 // @route   POST /api/family/create
@@ -23,20 +27,18 @@ ROUTER.post(API_CREATE_FAMILY, authenticate(), (req, res) => {
         return res.json({ errors });
       }
 
-      const name = req.body.familyName || user.userProfile.lastName;
-      const members = [user];
-
-      if (isBlank(name)) {
-        errors.familyName = FAMILY_NAME_REQUIRED;
+      if (user.hasFamily) {
+        errors.user = USER_HAS_FAMILY;
         return res.json({ errors });
       }
 
-      // TODO handling existing family situation
-      // Family.findOne({ name }).then(family => {
-      //   if (family) {
+      const name = (req.body && req.body.familyName) || user.userProfile.lastName;
+      const members = [user];
 
-      //   }
-      // })
+      if (isBlank(name)) {
+        errors.family = FAMILY_NAME_REQUIRED;
+        return res.json({ errors });
+      }
 
       return new Family({
         name,

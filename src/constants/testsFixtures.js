@@ -17,6 +17,19 @@ const mockedUsersData = [
     firstName: 'Stan',
     lastName: 'Doe',
   },
+  {
+    email: 'kate@doe.com',
+    password: 'Password123',
+    firstName: 'Kate',
+    lastName: 'Doe',
+  },
+  {
+    email: 'george@doe.com',
+    password: 'Password123',
+    firstName: 'George',
+    lastName: 'Doe',
+    hasFamily: true,
+  },
 ];
 
 const mockedWrongToken =
