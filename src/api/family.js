@@ -1,6 +1,6 @@
 const ROUTER = require('express').Router();
-const passport = require('passport');
 
+const authenticate = require('../helpers/authenticate');
 const User = require('../models/User');
 const Family = require('../models/Family');
 const { API_CREATE_FAMILY } = require('../constants/routes');
@@ -10,7 +10,7 @@ const { isBlank } = require('../helpers/validators');
 // @route   POST /api/family/create
 // @desc    Check if user is logged in
 // @access  Private
-ROUTER.post(API_CREATE_FAMILY, passport.authenticate('jwt', { session: false }), (req, res) => {
+ROUTER.post(API_CREATE_FAMILY, authenticate(), (req, res) => {
   const { id: userId } = req.user;
 
   User.findById(userId)

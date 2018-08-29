@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const ROUTER = require('express').Router();
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 
+const authenticate = require('../helpers/authenticate');
 const User = require('../models/User');
 const UserTemp = require('../models/UserTemp');
 const UserProfile = require('../models/UserProfile');
@@ -204,7 +204,7 @@ ROUTER.post(API_SIGN_IN, (req, res) => {
 // @route   GET api/user/sign-in
 // @desc    Check if user is logged in
 // @access  Private
-ROUTER.get(API_IS_SIGNED_IN, passport.authenticate('jwt', { session: false }), (req, res) => {
+ROUTER.get(API_IS_SIGNED_IN, authenticate(), (req, res) => {
   User.findById(req.user.id)
     .then(user => {
       if (!user) {
@@ -219,7 +219,7 @@ ROUTER.get(API_IS_SIGNED_IN, passport.authenticate('jwt', { session: false }), (
 // @route   GET api/user/get-current-user'
 // @desc    Check if user is logged in
 // @access  Private
-ROUTER.get(API_GET_CURRENT_USER, passport.authenticate('jwt', { session: false }), (req, res) => {
+ROUTER.get(API_GET_CURRENT_USER, authenticate(), (req, res) => {
   User.findById(req.user.id)
     .populate('userProfile', ['firstName', 'lastName', 'createdAt', 'isFamilyHead'])
     .then(user => {
