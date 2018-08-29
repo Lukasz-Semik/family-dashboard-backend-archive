@@ -1,6 +1,7 @@
 const ROUTER = require('express').Router();
 
 const authenticate = require('../helpers/authenticate');
+const { isBlank } = require('../helpers/validators');
 const User = require('../models/User');
 const Family = require('../models/Family');
 const { API_CREATE_FAMILY } = require('../constants/routes');
@@ -9,7 +10,6 @@ const {
   USER_HAS_FAMILY,
   FAMILY_NAME_REQUIRED,
 } = require('../constants/errorsMessages');
-const { isBlank } = require('../helpers/validators');
 
 // @route   POST /api/family/create
 // @desc    Check if user is logged in

@@ -36,8 +36,6 @@ const createUserConfirmedUser = mockedUserData => {
 const seedDb = done => {
   mongoose.connection
     .dropDatabase()
-    .then(() => createUserConfirmedUser(mockedUsersData[3]))
-    .then(() => createUserConfirmedUser(mockedUsersData[4]))
     .then(() => createUserConfirmedUser(mockedUsersData[1]))
     .then(() => {
       const { firstName, lastName, password, email } = mockedUsersData[2];
@@ -55,6 +53,8 @@ const seedDb = done => {
         email: userTemp.email,
       }).save();
     })
+    .then(() => createUserConfirmedUser(mockedUsersData[3]))
+    .then(() => createUserConfirmedUser(mockedUsersData[4]))
     .then(() => done());
 };
 

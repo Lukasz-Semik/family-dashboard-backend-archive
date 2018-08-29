@@ -3,7 +3,6 @@ const expect = require('expect');
 
 const { APP } = require('../server');
 const { API_FULL_SIGN_IN, API_FULL_CREATE_FAMILY } = require('../constants/routes');
-
 const { mockedUsersData } = require('../constants/testsFixtures');
 
 describe('family api routes', () => {
