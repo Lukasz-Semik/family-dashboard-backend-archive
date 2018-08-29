@@ -15,11 +15,12 @@ Frontend part you can find [here](https://github.com/Lukasz-Semik/family-dashboa
 
 ### Development
 
-1. Clone this repo.
+1. Clone this repo and prepare your local database `mongodb`.
 2. Run `yarn`.
-3. Run `yarn prepareDev`. This command will create a secret file at `src/config/secrets/secretes.js`.
-4. Fill in all the secret variables.
-5. Run `yarn dev`. Project will run on `port 8080`.
+3. Run `yarn runDB`, to start the database. It has to be triggered before server.
+4. In separate tab, run `yarn prepareDev`. This command will create a secret file at `src/config/secrets/secretes.js`.
+5. Fill in all the secret variables.
+6. Run `yarn dev`. Project will run on `port 8080`.
 
 ### Deployment
 

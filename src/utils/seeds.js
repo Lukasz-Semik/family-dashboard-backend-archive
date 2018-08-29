@@ -1,19 +1,11 @@
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 
 const User = require('../models/User');
 const UserProfile = require('../models/UserProfile');
 const UserTemp = require('../models/UserTemp');
 const Token = require('../models/Token');
-const Family = require('../models/Family');
 const { mockedUsersData } = require('../constants/testsFixtures');
-
-const clearTestDataBase = () =>
-  UserProfile.remove({})
-    .then(() => User.remove({}))
-    .then(() => UserProfile.remove({}))
-    .then(() => UserTemp.remove({}))
-    .then(() => Token.remove({}))
-    .then(() => Family.remove({}));
 
 const createUserConfirmedUser = mockedUserData => {
   const { firstName, lastName, password, email } = mockedUserData;
@@ -41,19 +33,12 @@ const createUserConfirmedUser = mockedUserData => {
     });
 };
 
-const seedUsers = done => {
-  clearTestDataBase()
-    .then(() => createUserConfirmedUser(mockedUsersData[0]))
-    .then(() => {
-      const { firstName, lastName, password, email } = mockedUsersData[1];
-
-      return new UserTemp({
-        firstName,
-        lastName,
-        email,
-        password,
-      }).save();
-    })
+const seedDb = done => {
+  mongoose.connection
+    .dropDatabase()
+    .then(() => createUserConfirmedUser(mockedUsersData[3]))
+    .then(() => createUserConfirmedUser(mockedUsersData[4]))
+    .then(() => createUserConfirmedUser(mockedUsersData[1]))
     .then(() => {
       const { firstName, lastName, password, email } = mockedUsersData[2];
 
@@ -70,11 +55,9 @@ const seedUsers = done => {
         email: userTemp.email,
       }).save();
     })
-    .then(() => createUserConfirmedUser(mockedUsersData[3]))
-    .then(() => createUserConfirmedUser(mockedUsersData[4]))
     .then(() => done());
 };
 
 module.exports = {
-  seedUsers,
+  seedDb,
 };

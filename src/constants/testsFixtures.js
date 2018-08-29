@@ -24,9 +24,9 @@ const mockedUsersData = [
     lastName: 'Doe',
   },
   {
-    email: 'george@doe.com',
+    email: 'mark@doe.com',
     password: 'Password123',
-    firstName: 'George',
+    firstName: 'Mark',
     lastName: 'Doe',
     hasFamily: true,
   },

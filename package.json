@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "prepareDev": "node src/utils/createSecretFile.js",
+    "runDB": "cd ~/mongo/bin && ./mongod --dbpath ~/mongo-data",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "lint": "eslint src",
