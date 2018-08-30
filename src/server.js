@@ -11,6 +11,7 @@ const { API_BASE_USER, API_BASE_FAMILY } = require('./constants/routes');
 const userRouter = require('./api/user');
 const familyRouter = require('./api/family');
 const mailerRouter = require('./routes/mailers');
+const allowCrossDomain = require('./middleware/cors');
 
 const PORT = process.env.PORT;
 const APP = express();
@@ -20,6 +21,7 @@ APP.set('view engine', 'hbs');
 APP.use(bodyParser.urlencoded({ extended: false }));
 APP.use(bodyParser.json());
 APP.use(passport.initialize());
+APP.use(allowCrossDomain);
 APP.use(API_BASE_USER, userRouter);
 APP.use(API_BASE_FAMILY, familyRouter);
 APP.use('/', mailerRouter);
