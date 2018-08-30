@@ -29,6 +29,11 @@ const secret = require('../config/mongodb/key-mongo-db').secret;
 const { sendAccountConfirmationRequest } = require('../services/mailers');
 const { TESTS_ENV } = require('../constants/env');
 
+// testing route api/user/test
+ROUTER.get('/test', (req, res) => {
+  res.status(200).json({ message: "it's working! :D " });
+});
+
 // @route   POST api/user/sign-up
 // @desc    Create User and UserProfile
 // @access  Public
